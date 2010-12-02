@@ -1,0 +1,30 @@
+Visualizing The Price of a Used Laptop
+======================================
+
+This is a pretty quick hack, shoot me an email if you any issues or questions:
+
+  Alan Grow <alangrow+usedlaptops@gmail.com>
+
+To crunch the data you will need at least:
+
+  * perl
+  * python
+  * numpy
+  * a web server (not included)
+
+To gather the feed data from craigslist, you will need
+
+  * rssdrop (http://search.cpan.org/~acg/rssdrop/)
+
+Or you could use
+
+  * rss2email (http://www.allthingsrss.com/rss2email/)
+
+They key thing is that you accumulate rss feed items from a craigslist search into a Maildir. See rssdrop.config for the feed setup. You should fetch the feed and its items periodically eg with a cron job.
+
+To crunch the data, just do
+
+  make 
+
+There's no incremental data rebuild at the moment, dependencies are not declared, there's no "make clean" target, blah blah blah caveat caveat caveat.
+
