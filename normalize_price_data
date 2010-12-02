@@ -1,0 +1,6 @@
+#!/bin/bash
+
+for f in data/by-model/*.txt; do
+  ./rm_outliers.py "$f" | sort -k1 -n > "${f/by-model/price-data}"
+done
+

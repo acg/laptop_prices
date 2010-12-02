@@ -1,0 +1,42 @@
+body {
+  font-family: sans-serif;
+  font-size: 16px;
+  margin: 20px 40px;
+  max-width: 1000px;
+}
+
+h1 {
+  font-size: 40px;
+  margin-bottom: 4px;
+}
+
+h2 {
+  font-size: 14px;
+  font-style: italic;
+}
+
+p {
+  margin: 10px 0px;
+}
+
+form {
+  margin: 20px 0px;
+}
+
+select {
+}
+
+#plot {
+  position: relative;
+  background: #f0f0f0;
+  width: 1000px;
+  height: 600px;
+}
+
+#plot .message {
+  position: absolute;
+  top: 300px;
+  left: 500px;
+  margin-left: -40px;
+}
+

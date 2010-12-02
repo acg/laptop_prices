@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Visualizing The Price of a Used Laptop</title>
+    <link href="./css/reset.css" rel="stylesheet" type="text/css"></link>
+    <link href="./css/layout.css" rel="stylesheet" type="text/css"></link>
+    <!--[if IE]><script language="javascript" type="text/javascript" src="./js/excanvas.min.js"></script><![endif]-->
+    <script language="javascript" type="text/javascript" src="./js/jquery.js"></script>
+    <script language="javascript" type="text/javascript" src="./js/jquery.flot.js"></script>
+    <script language="javascript" type="text/javascript" src="./js/jquery.flot.navigate.js"></script>
+    <script language="javascript" type="text/javascript" src="./js/jquery.main.js"></script>
+ </head>
+<body>
+
+<h1>Visualizing The Price of a Used Laptop</h1>
+<h2>Price data on Thinkpads and Macbooks gathered over the last couple years from <a href="http://newyork.craigslist.org/">NYC Craigslist</a>. Feedback: <a href="mailto:alangrow+usedlaptops@gmail.com">email me</a>.</h2>
+
+<form method="get" action="#">
+  <fieldset>
+    <label for="model">Select a Model:</label>
+    <select name="model" id="model"> </select>
+  </fieldset>
+</form>
+
+<div id="plot">
+  <div class="message">Select something!</div>
+</div>
+
+<p>Hover over any point to see the Craigslist post details.</p>
+<p>Drag to pan. Double click or use the mouse scrollwheel to zoom.</p>
+
+</body>
+</html>

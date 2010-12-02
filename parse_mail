@@ -1,0 +1,109 @@
+#!/usr/bin/perl
+
+use Getopt::Long;
+use HTTP::Date qw/str2time/;   # ewwww
+#use open ':utf8';
+#use open ':std';
+use warnings;
+use strict;
+
+my $usage = "$0 [--utc] [--thinkpad | --macbook] mailfile1 mailfile2 ...";
+my $utc = 0;
+my $thinkpad = 1;
+my $macbook = 0;
+
+die $usage unless GetOptions(
+  "utc" => \$utc,
+  "thinkpad" => sub { ($thinkpad,$macbook) = (1,0) },
+  "macbook" => sub { ($thinkpad,$macbook) = (0,1) },
+);
+
+
+for my $file (@ARGV)
+{
+  my %h = extract_mailfields( $file );
+  $h{file} = $file;
+
+  next unless defined $h{subject};
+  next if $h{subject} =~ /(?:parts|adapter|battery|charger|docking|replacement|repair)/i;
+  next if $h{subject} =~ /(?:wanted|we\s+(buy|sell|recycle)|fix\s+your)/i;
+  $h{subject} =~ s/^\s+//;
+  $h{subject} =~ s/\s+$//;
+
+  ### spam filtering - there's tons of it in macbooks feed
+
+  my $location = "";
+  $location = $1 if $h{subject} =~ / \( \s* (.*?)  \s* \) \s* $/x;
+  next if $location =~ /[\*\-\~_\.\`\(\)\\\/\?\+\{\}':^#!=@]{3,}/;
+  next if $location =~ /(specific\s*location|create\*posting)/i;
+  next if $location =~ /\d+/;
+  next if $location =~ /[a-zA-Z0-0-9]{16,}/;
+
+  next unless $h{subject} =~ s/\$(\d+)$//;     # show me the $$$
+  $h{price} = $1;
+  next unless $h{price} >= 100;      # probably not a laptop
+
+  if ($thinkpad)
+  {
+    next unless $h{subject} =~ /\b([XT]\d{2,3})\b/;  # match thinkpad models
+    $h{model} = $1;
+  }
+  elsif ($macbook)
+  {
+    next unless $h{subject} =~ /\bmacbook\b/i;
+
+    my $line = "UnknownType";
+    $line = "Air" if $h{subject} =~ /\bair\b/i;
+    $line = "Pro" if $h{subject} =~ /\bpro\b/i;
+
+    my $size = "UnknownSize";
+    $size = $1 if $h{subject} =~ /([1-2][0-9](\.\d+)?)\s*(?:"|'|in)/i;
+    $size =~ s/\.\d+$//;
+    $size = $size."inch" if $size =~ /^\d+$/;
+
+    my $modelnum = "UnknownModel";
+    $modelnum = $1 if $h{subject} =~ /(MA\d{3})/i;
+
+    if ($line eq "Air") {
+      $h{model} = "Macbook-$line";
+    } else {
+      $h{model} = "Macbook-$line-$size";
+    }
+  }
+
+  unless ($utc)
+  { 
+    my ($ss,$mm,$hh,$DD,$MM,$YY,@rest) = localtime($h{date});
+    $MM++;
+    $YY+=1900;
+    $h{date} = sprintf "%02d/%02d/%02d %02d:%02d:%02d" =>
+      $MM,$DD,$YY,$hh,$mm,$ss;
+  }
+
+  print "$h{date} $h{model} $h{price} $h{subject}\n";
+}
+
+exit 0;
+
+
+sub extract_mailfields
+{
+  my $file = shift;
+  my %h;
+
+  open my $fh, '<', $file or
+    die "open error: $!";
+
+  while (<$fh>) {
+    chomp;
+    $h{date} = str2time($1) if /^Date: (.*)$/;
+    $h{subject} = $1 if /^Subject: (.*)$/;
+    last if defined $h{subject};
+  }
+
+  close $fh or
+    die "close error: $!";
+
+  return %h;
+}
+

@@ -1,0 +1,39 @@
+#!/usr/bin/perl
+
+#use open ':utf8';
+#use open ':std';
+use warnings;
+use strict;
+
+my $dir = shift or die;
+my $wfh;
+my $oldmodel;
+
+while (<>)
+{
+  chomp;
+  my ($time,$model,$price,$subject) = split / /, $_, 4;
+
+  if ($oldmodel && $model ne $oldmodel) {
+    close $wfh or
+      die "close error: $!";
+    undef $wfh;
+  }
+
+  if (!$wfh) {
+    open $wfh, '>', "$dir/$model.txt" or
+      die "open error: $!";
+  }
+
+  print $wfh "$time $price $subject".$/;
+
+  $oldmodel = $model;
+}
+
+if ($wfh) {
+  close $wfh or
+    die "close error: $!";
+}
+
+exit 0;
+
