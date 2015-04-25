@@ -32,8 +32,15 @@ function loadDropdown(dropdown) {
 
       dropdown.change( function() { loadPlot($(this).val()) } );
       dropdown.removeAttr( 'disabled' );
-      dropdown.val( $('option:first', dropdown).val() );
-      dropdown.trigger( 'change' );
+
+      if (window.location.hash) {
+        dropdown.val( window.location.hash.replace(/^#/,'') );
+        dropdown.trigger( 'change' );
+      }
+      else {
+        dropdown.val( $('option:first', dropdown).val() );
+        dropdown.trigger( 'change' );
+      }
     }
   } );
 
